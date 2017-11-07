@@ -30,6 +30,7 @@ const (
 	WrapperName       = "godelw"
 	DistsDir          = "dists"
 	DownloadsDir      = "downloads"
+	PluginsDir        = "plugins"
 	gödelHomeTemplate = "gödel-home"
 	gödelHomeEnvVar   = "GODEL_HOME"
 	defaultGödelHome  = ".godel"
@@ -114,6 +115,7 @@ func gödelHomeSpec(providers []s.FileNodeProvider) s.LayoutSpec {
 		s.Dir(s.TemplateName(gödelHomeTemplate), "",
 			s.Dir(s.LiteralName("dists"), DistsDir, providers...),
 			s.Dir(s.LiteralName("downloads"), DownloadsDir),
+			s.Dir(s.LiteralName("plugins"), PluginsDir),
 		),
 		true,
 	)

@@ -781,7 +781,7 @@ func TestDebugFlagPrintsStackTrace(t *testing.T) {
 	cmd.Dir = testProjectDir
 	output, err = cmd.CombinedOutput()
 	require.Error(t, err)
-	assert.Regexp(t, `(?s)^foo does not exist.+cmd/godel.localPkg.getPkg.+Failed to install from foo into .+`, string(output))
+	assert.Regexp(t, `(?s)^foo does not exist.+godelcli/installupdate.localPkg.getPkg.+Failed to install from foo into .+`, string(output))
 }
 
 func execCommand(t *testing.T, dir, cmdName string, args ...string) string {

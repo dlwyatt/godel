@@ -20,12 +20,13 @@ import (
 
 	"github.com/kardianos/osext"
 	"github.com/nmiyake/pkg/dirs"
+	"github.com/nmiyake/pkg/errorstringer"
 	"github.com/palantir/amalgomate/amalgomated"
 	"github.com/pkg/errors"
 
-	"github.com/palantir/godel"
-	"github.com/palantir/godel/cmd"
-	"github.com/palantir/godel/cmd/clicmds"
+	"github.com/palantir/godel/framework/builtintask"
+	"github.com/palantir/godel/framework/godelcli"
+	"github.com/palantir/godel/framework/godellauncher"
 )
 
 func main() {
@@ -40,10 +41,45 @@ func main() {
 		os.Exit(1)
 	}
 
-	cmdLibrary, err := clicmds.CfgCliCmdSet(gödelPath)
+	cmdLib, err := builtintask.AmalgomatedCmdLib(gödelPath)
 	if err != nil {
-		fmt.Printf("%+v\n", errors.Wrapf(err, "failed to create CfgCliCmdSet"))
+		fmt.Printf("%+v\n", errors.Wrapf(err, "failed to create amalgomated CmdLib"))
 		os.Exit(1)
 	}
-	os.Exit(amalgomated.RunApp(os.Args, cmd.GlobalFlagSet(), cmdLibrary, godel.App(gödelPath).Run))
+	os.Exit(amalgomated.RunApp(os.Args, nil, cmdLib, runGodelApp))
+}
+
+func runGodelApp(osArgs []string) int {
+	os.Args = osArgs
+
+	global, err := godellauncher.ParseAppArgs(os.Args)
+	if err != nil {
+		printErrAndExit(err, global.Debug)
+	}
+
+	var allTasks []godellauncher.Task
+	allTasks = append(allTasks, godellauncher.VersionTask())
+	allTasks = append(allTasks, godelcli.Tasks(global.Wrapper)...)
+	allTasks = append(allTasks, builtintask.Tasks()...)
+	allTasks = append(allTasks, godelcli.VerifyTask(allTasks))
+
+	task, err := godellauncher.TaskForInput(global, allTasks)
+	if err != nil {
+		printErrAndExit(err, global.Debug)
+	}
+
+	if err := task.Run(global, os.Stdout); err != nil {
+		printErrAndExit(err, global.Debug)
+	}
+	return 0
+}
+
+func printErrAndExit(err error, debug bool) {
+	if errStr := err.Error(); errStr != "" {
+		if debug {
+			errStr = errorstringer.StackWithInterleavedMessages(err)
+		}
+		fmt.Fprintln(os.Stderr, errStr)
+	}
+	os.Exit(1)
 }

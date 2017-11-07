@@ -14,40 +14,39 @@
 
 package godel
 
-import (
-	"github.com/nmiyake/pkg/errorstringer"
-	"github.com/palantir/pkg/cli"
-
-	"github.com/palantir/godel/cmd"
-	"github.com/palantir/godel/cmd/checkpath"
-	"github.com/palantir/godel/cmd/clicmds"
-	"github.com/palantir/godel/cmd/githooks"
-	"github.com/palantir/godel/cmd/githubwiki"
-	"github.com/palantir/godel/cmd/godel"
-	"github.com/palantir/godel/cmd/idea"
-	"github.com/palantir/godel/cmd/packages"
-	"github.com/palantir/godel/cmd/verify"
-)
-
-func App(gödelPath string) *cli.App {
-	app := cli.NewApp(cli.DebugHandler(errorstringer.StackWithInterleavedMessages))
-	app.Name = "godel"
-	app.Usage = "Run tasks for coding, checking, formatting, testing, building and publishing Go code"
-	app.Flags = append(app.Flags, cmd.GlobalCLIFlags()...)
-	app.Version = godel.Version
-
-	app.Subcommands = []cli.Command{
-		godel.VersionCommand(),
-		godel.InstallCommand(),
-		godel.UpdateCommand(),
-		checkpath.Command(),
-		githooks.Command(),
-		githubwiki.Command(),
-		idea.Command(),
-		packages.Command(),
-		verify.Command(gödelPath),
-	}
-	app.Subcommands = append(app.Subcommands, clicmds.CfgCliCommands(gödelPath)...)
-
-	return app
-}
+//import (
+//	"github.com/nmiyake/pkg/errorstringer"
+//	"github.com/palantir/pkg/cli"
+//
+//	"github.com/palantir/godel/cmd/checkpath"
+//	"github.com/palantir/godel/cmd/clicmds"
+//	"github.com/palantir/godel/cmd/githooks"
+//	"github.com/palantir/godel/cmd/githubwiki"
+//	"github.com/palantir/godel/cmd/godel"
+//	"github.com/palantir/godel/cmd/idea"
+//	"github.com/palantir/godel/cmd/packages"
+//	"github.com/palantir/godel/cmd/verify"
+//)
+//
+//func App(gödelPath string) *cli.App {
+//	app := cli.NewApp(cli.DebugHandler(errorstringer.StackWithInterleavedMessages))
+//	app.Name = "godel"
+//	app.Usage = "Run tasks for coding, checking, formatting, testing, building and publishing Go code"
+//	app.Flags = append(app.Flags, cmd_old.GlobalCLIFlags()...)
+//	app.Version = godel.Version
+//
+//	app.Subcommands = []cli.Command{
+//		godel.VersionCommand(),
+//		godel.InstallCommand(),
+//		godel.UpdateCommand(),
+//		checkpath.Command(),
+//		githooks.Command(),
+//		githubwiki.Command(),
+//		idea.Command(),
+//		packages.Command(),
+//		verify.Command(gödelPath),
+//	}
+//	app.Subcommands = append(app.Subcommands, clicmds.CfgCliCommands(gödelPath)...)
+//
+//	return app
+//}
